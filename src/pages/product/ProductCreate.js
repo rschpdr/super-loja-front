@@ -12,6 +12,7 @@ function ProductCreate() {
     manufacturer: "",
     price: 0,
     inStock: 0,
+    picture: new File([], ""),
     pictureUrl: "",
     category: "Outros",
     tags: [],
@@ -20,6 +21,13 @@ function ProductCreate() {
   const [loading, setLoading] = useState(false);
 
   function handleChange(e) {
+    if (e.target.files) {
+      return setProductData({
+        ...productData,
+        [e.target.name]: e.target.files[0],
+      });
+    }
+
     setProductData({ ...productData, [e.target.name]: e.target.value });
   }
 
@@ -37,13 +45,33 @@ function ProductCreate() {
     }
   }
 
+  async function handleFileUpload(file) {
+    try {
+      const uploadData = new FormData();
+
+      uploadData.append("picture", file);
+
+      const response = await api.post("/upload", uploadData);
+
+      console.log(response);
+
+      return response.data.url;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
 
     try {
       setLoading(true);
+
+      const pictureUrl = await handleFileUpload(productData.picture);
+
       const response = await api.post("/product", {
         ...productData,
+        pictureUrl,
         tags: productData.tags.map((currentTagObj) => currentTagObj.value),
       });
 
@@ -104,11 +132,11 @@ function ProductCreate() {
         />
 
         <FormField
+          type="file"
           label="Imagem"
           id="productFormPicture"
-          name="pictureUrl"
+          name="picture"
           onChange={handleChange}
-          value={productData.pictureUrl}
           readOnly={loading}
         />
 

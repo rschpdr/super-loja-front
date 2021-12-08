@@ -10,6 +10,8 @@ import Navbar from "./Navbar";
 // Produtos
 import ProductCreate from "../pages/product/ProductCreate";
 import ProductList from "../pages/product/ProductList";
+import ProductDetail from "../pages/product/ProductDetail";
+import ProductDelete from "../pages/product/ProductDelete";
 
 import { AuthContextComponent } from "../contexts/authContext";
 
@@ -30,6 +32,14 @@ function App() {
             <Route
               path="/product/list"
               element={<ProtectedRoute component={ProductList} />}
+            />
+            <Route
+              path="/product/:id"
+              element={<ProtectedRoute component={ProductDetail} />}
+            />
+            <Route
+              path="/product/delete/:id"
+              element={<ProtectedRoute component={ProductDelete} />}
             />
           </Routes>
         </div>
